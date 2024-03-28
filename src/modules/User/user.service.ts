@@ -4,6 +4,7 @@ import prisma from "../../utils/prisma";
 import { IUser } from "./user.interface";
 import { searchAbleFields } from "./user.constant";
 import { Prisma } from "@prisma/client";
+import { IValidateUser } from "../../interface/validateUser";
 
 const createUser = async (user: IUser) => {
   const hashedPassword = await hashPassword(user.password);
@@ -133,7 +134,39 @@ const getDonorList = async (
   };
 };
 
+const getUserProfile = async (user: IValidateUser) => {
+  const userProfile = await prisma.user.findUnique({
+    where: {
+      id: user.id,
+    },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      bloodType: true,
+      location: true,
+      availability: true,
+      createdAt: true,
+      updatedAt: true,
+      userProfile: {
+        select: {
+          id: true,
+          userId: true,
+          age: true,
+          bio: true,
+          lastDonationDate: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+      },
+    },
+  });
+
+  return userProfile;
+};
+
 export const userService = {
   createUser,
   getDonorList,
+  getUserProfile,
 };

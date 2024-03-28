@@ -4,6 +4,7 @@ import sendResponse from "../../utils/sendResponse";
 import { userService } from "./user.service";
 import httpStatus from "http-status";
 import { BloodType } from "./user.constant";
+import { IValidateUser } from "../../interface/validateUser";
 
 const createUser = catchAsync(async (req: Request, res: Response) => {
   const result = await userService.createUser(req.body);
@@ -39,7 +40,25 @@ const getDonorList = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const getUserProfile = catchAsync(
+  async (
+    req: Request & {
+      user?: IValidateUser;
+    },
+    res: Response
+  ) => {
+    const result = await userService.getUserProfile(req.user as IValidateUser);
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "User profile fetched successfully",
+      data: result,
+    });
+  }
+);
+
 export const userController = {
   createUser,
   getDonorList,
+  getUserProfile,
 };
