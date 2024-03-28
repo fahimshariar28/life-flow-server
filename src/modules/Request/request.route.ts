@@ -15,4 +15,11 @@ router.post(
 
 router.get("/donation-request", authHelp(), requestController.getRequests);
 
+router.put(
+  "/donation-request/:requestId",
+  authHelp(),
+  validateRequest(requestValidation.updateRequest),
+  requestController.updateRequest
+);
+
 export const requestRoutes = router;

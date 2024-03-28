@@ -42,7 +42,29 @@ const getRequests = catchAsync(
   }
 );
 
+const updateRequest = catchAsync(
+  async (
+    req: Request & {
+      user?: IValidateUser;
+    },
+    res: Response
+  ) => {
+    const result = await requestService.updateRequest(
+      req.params.requestId,
+      req.body,
+      req.user as IValidateUser
+    );
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "Request updated successfully",
+      data: result,
+    });
+  }
+);
+
 export const requestController = {
   requestDonor,
   getRequests,
+  updateRequest,
 };

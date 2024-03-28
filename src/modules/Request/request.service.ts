@@ -1,3 +1,4 @@
+import { RequestStatus } from "@prisma/client";
 import { IValidateUser } from "../../interface/validateUser";
 import prisma from "../../utils/prisma";
 import { IRequest } from "./request.interface";
@@ -33,7 +34,36 @@ const getRequests = async (user: IValidateUser) => {
   return result;
 };
 
+const updateRequest = async (
+  requestId: string,
+  requestStatus: { status: string },
+  user: IValidateUser
+) => {
+  const requestData = await prisma.request.findFirst({
+    where: {
+      id: requestId,
+      donorId: user?.id,
+    },
+  });
+
+  if (!requestData) {
+    throw new Error("Request not found");
+  }
+
+  const result = await prisma.request.update({
+    where: {
+      id: requestId,
+    },
+    data: {
+      requestStatus: requestStatus.status as RequestStatus,
+    },
+  });
+
+  return result;
+};
+
 export const requestService = {
   requestDonor,
   getRequests,
+  updateRequest,
 };

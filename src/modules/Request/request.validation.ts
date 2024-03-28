@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const requestSchema = z.object({
+const requestDonor = z.object({
   body: z.object({
     donorId: z.string({
       required_error: "Donor ID is required",
@@ -29,6 +29,16 @@ export const requestSchema = z.object({
   }),
 });
 
+const updateRequest = z.object({
+  body: z.object({
+    status: z.string({
+      required_error: "Status is required",
+      invalid_type_error: "Status must be a string",
+    }),
+  }),
+});
+
 export const requestValidation = {
-  requestDonor: requestSchema,
+  requestDonor,
+  updateRequest,
 };
