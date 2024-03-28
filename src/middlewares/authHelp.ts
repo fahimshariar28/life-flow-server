@@ -3,6 +3,7 @@ import config from "../config";
 import { Secret } from "jsonwebtoken";
 import { jwtHelpers } from "../utils/jwtHelper";
 import prisma from "./../utils/prisma";
+import AppError from "../errors/AppError";
 
 const authHelp = () => {
   return async (
@@ -14,7 +15,7 @@ const authHelp = () => {
       const token = req.headers.authorization;
 
       if (!token) {
-        throw new Error("Access denied. No token provided.");
+        throw new AppError(401, "Unauthorized. Please login to continue.");
       }
 
       const verifiedUser = jwtHelpers.verifyToken(
@@ -29,7 +30,7 @@ const authHelp = () => {
       });
 
       if (!user) {
-        throw new Error("User not found.");
+        throw new AppError(401, "Unauthorized. Please login to continue.");
       }
 
       req.user = verifiedUser;

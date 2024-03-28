@@ -2,6 +2,7 @@ import { RequestStatus } from "@prisma/client";
 import { IValidateUser } from "../../interface/validateUser";
 import prisma from "../../utils/prisma";
 import { IRequest } from "./request.interface";
+import AppError from "../../errors/AppError";
 
 const requestDonor = async (requestData: IRequest, user: IValidateUser) => {
   const data = { ...requestData, requesterId: user?.id };
@@ -21,7 +22,6 @@ const requestDonor = async (requestData: IRequest, user: IValidateUser) => {
 };
 
 const getRequests = async (user: IValidateUser) => {
-  console.log(user);
   const result = await prisma.request.findMany({
     where: {
       donorId: user?.id,
@@ -47,7 +47,7 @@ const updateRequest = async (
   });
 
   if (!requestData) {
-    throw new Error("Request not found");
+    throw new AppError(404, "Request not found");
   }
 
   const result = await prisma.request.update({

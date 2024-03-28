@@ -1,3 +1,4 @@
+import AppError from "../../errors/AppError";
 import prisma from "../../utils/prisma";
 import { IUserProfile } from "./userProfile.interface";
 
@@ -15,7 +16,7 @@ const updateUserProfile = async (
   });
 
   if (!user) {
-    throw new Error("User not found");
+    throw new AppError(404, "User not found");
   }
 
   const result = await prisma.userProfile.update({

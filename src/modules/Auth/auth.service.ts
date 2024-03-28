@@ -4,6 +4,7 @@ import isCorrectPassword from "./../../utils/passwordChecker";
 import { jwtHelpers } from "../../utils/jwtHelper";
 import config from "../../config";
 import { Secret } from "jsonwebtoken";
+import AppError from "../../errors/AppError";
 
 const userLogin = async (data: ILogin) => {
   const userData = await prisma.user.findUniqueOrThrow({
@@ -18,7 +19,7 @@ const userLogin = async (data: ILogin) => {
   );
 
   if (!passwordMatched) {
-    throw new Error("Invalid password");
+    throw new AppError(401, "Invalid email or password");
   }
 
   const accessTokenData = {
