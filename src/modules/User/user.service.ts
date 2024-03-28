@@ -1,6 +1,9 @@
 import { hashPassword } from "../../utils/hashPassword";
+import { paginateCalculation } from "../../utils/paginateCalculation";
 import prisma from "../../utils/prisma";
 import { IUser } from "./user.interface";
+import { searchAbleFields } from "./user.constant";
+import { Prisma } from "@prisma/client";
 
 const createUser = async (user: IUser) => {
   const hashedPassword = await hashPassword(user.password);
@@ -41,6 +44,79 @@ const createUser = async (user: IUser) => {
   return result;
 };
 
+const getDonorList = async (
+  searchTerms: string,
+  options: {
+    page: number;
+    limit: number;
+    sortBy: string;
+    sortOrder: string;
+  }
+) => {
+  const { page, limit, skip, sortBy, sortOrder } = paginateCalculation(options);
+
+  const andConditions: Prisma.UserWhereInput[] = [];
+
+  if (searchTerms) {
+    andConditions.push({
+      OR: searchAbleFields.map((field) => ({
+        [field]: {
+          contains: searchTerms,
+          mode: "insensitive",
+        },
+      })),
+    });
+  }
+
+  const donorList = await prisma.user.findMany({
+    where: {
+      AND: andConditions,
+    },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      bloodType: true,
+      location: true,
+      availability: true,
+      createdAt: true,
+      updatedAt: true,
+      userProfile: {
+        select: {
+          id: true,
+          userId: true,
+          age: true,
+          bio: true,
+          lastDonationDate: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+      },
+    },
+    orderBy: {
+      [sortBy]: sortOrder,
+    },
+    skip,
+    take: limit,
+  });
+
+  const totalDonors = await prisma.user.count({
+    where: {
+      AND: andConditions,
+    },
+  });
+
+  return {
+    meta: {
+      total: totalDonors,
+      page,
+      limit,
+    },
+    donorList,
+  };
+};
+
 export const userService = {
   createUser,
+  getDonorList,
 };

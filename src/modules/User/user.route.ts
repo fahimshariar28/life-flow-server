@@ -11,4 +11,6 @@ router.post(
   userController.createUser
 );
 
+router.get("/donor-list", userController.getDonorList);
+
 export const userRoutes = router;

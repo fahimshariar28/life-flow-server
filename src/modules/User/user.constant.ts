@@ -8,3 +8,5 @@ export enum BloodType {
   O_Positive = "O+",
   O_Negative = "O-",
 }
+
+export const searchAbleFields = ["bloodType", "location", "name", "email"];
