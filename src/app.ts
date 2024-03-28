@@ -1,6 +1,7 @@
 import express, { Application, NextFunction, Request, Response } from "express";
 import cors from "cors";
 import httpStatus from "http-status";
+import router from "./routes";
 
 const app: Application = express();
 app.use(cors());
@@ -15,6 +16,8 @@ app.get("/", (req: Request, res: Response) => {
     Message: "Welcome to the Life Flow!",
   });
 });
+
+app.use("/api", router);
 
 // Error handler
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
