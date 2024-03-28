@@ -2,6 +2,7 @@ import express, { Application, NextFunction, Request, Response } from "express";
 import cors from "cors";
 import httpStatus from "http-status";
 import router from "./routes";
+import globalErrorHandler from "./middlewares/globalErrorHandler";
 
 const app: Application = express();
 app.use(cors());
@@ -20,15 +21,7 @@ app.get("/", (req: Request, res: Response) => {
 app.use("/api", router);
 
 // Error handler
-app.use((err: any, req: Request, res: Response, next: NextFunction) => {
-  res.status(500).json({
-    success: false,
-    message: "INTERNAL SERVER ERROR!",
-    error: {
-      message: err.message,
-    },
-  });
-});
+app.use(globalErrorHandler);
 
 // Not found handler
 app.use((req: Request, res: Response, next: NextFunction) => {
