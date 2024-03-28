@@ -45,7 +45,11 @@ const createUser = async (user: IUser) => {
 };
 
 const getDonorList = async (
-  searchTerms: string,
+  filters: {
+    searchTerms: string;
+    bloodType: string;
+    availability: boolean;
+  },
   options: {
     page: number;
     limit: number;
@@ -53,6 +57,8 @@ const getDonorList = async (
     sortOrder: string;
   }
 ) => {
+  const { searchTerms, ...filterData } = filters;
+
   const { page, limit, skip, sortBy, sortOrder } = paginateCalculation(options);
 
   const andConditions: Prisma.UserWhereInput[] = [];
@@ -68,10 +74,21 @@ const getDonorList = async (
     });
   }
 
+  if (Object.keys(filterData).length > 0) {
+    andConditions.push({
+      AND: Object.keys(filterData).map((key) => ({
+        [key]: {
+          equals: (filterData as any)[key],
+        },
+      })),
+    });
+  }
+
+  const whereConditions: Prisma.UserWhereInput =
+    andConditions.length > 0 ? { AND: andConditions } : {};
+
   const donorList = await prisma.user.findMany({
-    where: {
-      AND: andConditions,
-    },
+    where: whereConditions,
     select: {
       id: true,
       name: true,

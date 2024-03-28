@@ -3,6 +3,7 @@ import catchAsync from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
 import { userService } from "./user.service";
 import httpStatus from "http-status";
+import { BloodType } from "./user.constant";
 
 const createUser = catchAsync(async (req: Request, res: Response) => {
   const result = await userService.createUser(req.body);
@@ -15,14 +16,20 @@ const createUser = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getDonorList = catchAsync(async (req: Request, res: Response) => {
-  const searchTerms = req.query.searchTerms as string;
+  const filters = {
+    searchTerms: req.query.searchTerms as string,
+    bloodType: BloodType[req.query.bloodType as keyof typeof BloodType],
+    availability: (req.query.availability as string) === "true" ? true : false,
+  };
+
   const options = {
-    page: Number(req.query.page) || 1,
-    limit: Number(req.query.limit) || 10,
+    page: Number(req.query.page),
+    limit: Number(req.query.limit),
     sortBy: req.query.sortBy as string,
     sortOrder: req.query.sortOrder as string,
   };
-  const result = await userService.getDonorList(searchTerms, options);
+
+  const result = await userService.getDonorList(filters, options);
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
