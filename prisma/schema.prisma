@@ -61,6 +61,6 @@ model Request {
 
 enum RequestStatus {
   PENDING
-  ACCEPTED
+  APPROVED
   REJECTED
 }
