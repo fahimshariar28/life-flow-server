@@ -13,4 +13,6 @@ router.post(
   requestController.requestDonor
 );
 
+router.get("/donation-request", authHelp(), requestController.getRequests);
+
 export const requestRoutes = router;

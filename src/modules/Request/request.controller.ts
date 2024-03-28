@@ -25,6 +25,24 @@ const requestDonor = catchAsync(
   }
 );
 
+const getRequests = catchAsync(
+  async (
+    req: Request & {
+      user?: IValidateUser;
+    },
+    res: Response
+  ) => {
+    const result = await requestService.getRequests(req.user as IValidateUser);
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "Requests fetched successfully",
+      data: result,
+    });
+  }
+);
+
 export const requestController = {
   requestDonor,
+  getRequests,
 };

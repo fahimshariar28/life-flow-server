@@ -19,6 +19,21 @@ const requestDonor = async (requestData: IRequest, user: IValidateUser) => {
   return result;
 };
 
+const getRequests = async (user: IValidateUser) => {
+  console.log(user);
+  const result = await prisma.request.findMany({
+    where: {
+      donorId: user?.id,
+    },
+    include: {
+      requester: true,
+    },
+  });
+
+  return result;
+};
+
 export const requestService = {
   requestDonor,
+  getRequests,
 };
