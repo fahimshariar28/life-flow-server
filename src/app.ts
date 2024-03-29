@@ -3,6 +3,7 @@ import cors from "cors";
 import httpStatus from "http-status";
 import router from "./routes";
 import globalErrorHandler from "./middlewares/globalErrorHandler";
+import notFound from "./errors/notFound";
 
 const app: Application = express();
 app.use(cors());
@@ -24,15 +25,6 @@ app.use("/api", router);
 app.use(globalErrorHandler);
 
 // Not found handler
-app.use((req: Request, res: Response, next: NextFunction) => {
-  res.status(httpStatus.NOT_FOUND).json({
-    success: false,
-    message: "API NOT FOUND!",
-    error: {
-      path: req.originalUrl,
-      message: "Your requested path is not found!",
-    },
-  });
-});
+app.use(notFound);
 
 export default app;
