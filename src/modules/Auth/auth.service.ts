@@ -32,14 +32,12 @@ const userLogin = async (data: ILogin) => {
     config.jwt.secret as Secret,
     config.jwt.expiresIn as string
   );
-  const returnData = {
+
+  return {
     id: userData.id,
     name: userData.name,
     email: userData.email,
     token: accessToken,
-  };
-  return {
-    returnData,
   };
 };
 
